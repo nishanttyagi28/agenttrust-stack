@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agenttrust-stack"
-version = "0.0.0"
+version = "0.1.0"
 description = "Thin evidence chain across policy, sealed effect, witness, and CI regression."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "Nishant Tyagi" }]
 classifiers = [
-  "Development Status :: 1 - Planning",
-  "Private :: Do Not Upload",
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
 ]
 dependencies = ["pydantic>=2.0,<3"]
 
@@ -20,9 +20,27 @@ dependencies = ["pydantic>=2.0,<3"]
 dev = ["pytest>=8,<9"]
 karmasakshi = ["karmasakshi-protocol>=0.2,<0.3"]
 
-[tool.setuptools.packages.find]
-where = ["packages/evidence", "packages/importers", "packages/gate", "packages/ci"]
-include = ["agenttrust*"]
+[project.scripts]
+agenttrust-demo = "agenttrust.demo.run_demo:main"
+agenttrust-report = "agenttrust.report.render:main"
+
+[tool.setuptools]
+packages = [
+  "agenttrust.evidence",
+  "agenttrust.importers",
+  "agenttrust.gate",
+  "agenttrust.ci",
+  "agenttrust.demo",
+  "agenttrust.report",
+]
+
+[tool.setuptools.package-dir]
+"agenttrust.evidence" = "packages/evidence/agenttrust/evidence"
+"agenttrust.importers" = "packages/importers/agenttrust/importers"
+"agenttrust.gate" = "packages/gate/agenttrust/gate"
+"agenttrust.ci" = "packages/ci/agenttrust/ci"
+"agenttrust.demo" = "apps/demo"
+"agenttrust.report" = "apps/report"
 
 [tool.pytest.ini_options]
 pythonpath = [

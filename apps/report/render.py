@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import sys
 from pathlib import Path
 
 from agenttrust.evidence import Chain, parse_chain
@@ -33,7 +34,17 @@ def render_html(chain: Chain) -> str:
 
 def render_file(chain_path: Path, html_path: Path) -> None:
     chain = parse_chain(chain_path.read_text(encoding="utf-8"))
+    html_path.parent.mkdir(parents=True, exist_ok=True)
     html_path.write_text(render_html(chain), encoding="utf-8")
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if len(args) != 2:
+        print("usage: python -m agenttrust.report CHAIN.json REPORT.html", file=sys.stderr)
+        return 2
+    render_file(Path(args[0]), Path(args[1]))
+    return 0
 
 
 def _effect(chain: Chain) -> str:

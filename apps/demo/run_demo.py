@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from agenttrust.ci import check_chain
 from agenttrust.evidence import EffectType, canonical_json
 from agenttrust.gate import Intent, attach_payment
@@ -42,8 +44,20 @@ def run_story() -> dict[str, str | int | bool]:
     }
 
 
+def write_green_chain(story: dict[str, str | int | bool], directory: Path) -> Path:
+    """Write the allow-path chain. Layout is locked in ADR 0004."""
+    directory.mkdir(parents=True, exist_ok=True)
+    target = directory / "chain.json"
+    text = str(story["right_chain"])
+    if not text.endswith("\n"):
+        text += "\n"
+    target.write_text(text, encoding="utf-8")
+    return target
+
+
 def main() -> int:
     story = run_story()
+    write_green_chain(story, Path("evidence-pack"))
     print(f"red_exit={story['red_exit']}")
     print(f"green_exit={story['green_exit']}")
     print(f"regression_exit={story['regression_exit']}")

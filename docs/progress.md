@@ -80,3 +80,9 @@ README has an Alpha status line, the CI badge, and the existing green run https:
 | G ADRs 0004 and 0005, progress | Progress updated. ADRs not written. |
 | H Tests green on Actions after push | Last green run is 37510342515. This slice is not pushed. |
 
+## P1 — install and evidence pack
+
+**Status:** In progress (2026-10-07).
+
+ADR 0004 locks explicit `package-dir` entries, `python -m agenttrust.demo` / `python -m agenttrust.report`, version `0.1.0` Alpha, and `evidence-pack/chain.json` + `evidence-pack/report.html`. Not published to PyPI. Actions URL for the artifact run is filled after the workflow is green.
+

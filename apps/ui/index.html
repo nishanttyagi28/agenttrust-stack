@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AgentTrust — Live Evidence</title>
+<style>
+  :root {
+    --bg: #070b14;
+    --panel: #0e1524;
+    --panel2: #121c2e;
+    --line: rgba(120,160,255,.14);
+    --text: #e8eefc;
+    --muted: #8b9bb8;
+    --accent: #5b8cff;
+    --cyan: #3ee0c5;
+    --deny: #ff5d7a;
+    --allow: #3dd68c;
+    --warn: #f5c542;
+    --glow: 0 0 40px rgba(91,140,255,.25);
+    font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    background:
+      radial-gradient(900px 500px at 10% -10%, rgba(91,140,255,.22), transparent 55%),
+      radial-gradient(700px 400px at 90% 0%, rgba(62,224,197,.12), transparent 50%),
+      var(--bg);
+  }
+  .shell { max-width: 1120px; margin: 0 auto; padding: 28px 22px 48px; }
+  header {
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 28px;
+  }
+  .brand { display: flex; gap: 14px; align-items: center; }
+  .logo {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    box-shadow: var(--glow); display: grid; place-items: center;
+    font-weight: 800; letter-spacing: -.02em;
+  }
+  h1 { margin: 0; font-size: 1.45rem; letter-spacing: -.02em; }
+  .sub { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
+  .actions { display: flex; gap: 10px; align-items: center; }
+  button#run {
+    border: 0; cursor: pointer; color: #041018; font-weight: 700;
+    padding: 12px 18px; border-radius: 999px; font-size: .95rem;
+    background: linear-gradient(135deg, var(--cyan), #7cf0ff 40%, var(--accent));
+    box-shadow: 0 8px 28px rgba(62,224,197,.28);
+    transition: transform .15s ease, filter .15s;
+  }
+  button#run:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  button#run:disabled { opacity: .55; cursor: wait; transform: none; }
+  .pill {
+    font-size: .78rem; color: var(--muted); border: 1px solid var(--line);
+    padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.03);
+  }
+  .grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    margin-bottom: 18px;
+  }
+  .card {
+    background: linear-gradient(180deg, var(--panel2), var(--panel));
+    border: 1px solid var(--line); border-radius: 18px; padding: 16px 16px 14px;
+    min-height: 128px; position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
+    background: var(--accent); opacity: .7;
+  }
+  .card.deny::before { background: var(--deny); }
+  .card.allow::before { background: var(--allow); }
+  .card.regress::before { background: var(--warn); }
+  .card.blocked::before { background: #7a8799; }
+  .card .kicker { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .card h3 { margin: 8px 0 6px; font-size: 1.02rem; }
+  .card .detail { color: var(--muted); font-size: .84rem; line-height: 1.4; word-break: break-all; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+    font-size: .78rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.06);
+  }
+  .badge.pass { color: var(--allow); }
+  .badge.fail { color: var(--deny); }
+  .badge.wait { color: var(--muted); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .panels { display: grid; gap: 14px; grid-template-columns: 1.2fr .8fr; }
+  @media (max-width: 860px) { .panels { grid-template-columns: 1fr; } }
+  .panel {
+    background: rgba(8,12,22,.75); border: 1px solid var(--line);
+    border-radius: 18px; padding: 16px; backdrop-filter: blur(8px);
+  }
+  .panel h2 { margin: 0 0 10px; font-size: 1rem; }
+  pre#log {
+    margin: 0; max-height: 280px; overflow: auto; font-size: .78rem;
+    line-height: 1.45; color: #c6d4f0; white-space: pre-wrap;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  .meta { display: grid; gap: 10px; }
+  .meta row, .meta .row {
+    display: flex; justify-content: space-between; gap: 12px;
+    border-bottom: 1px dashed rgba(255,255,255,.06); padding: 8px 0;
+    font-size: .86rem;
+  }
+  .meta .label { color: var(--muted); }
+  .meta .value { text-align: right; word-break: break-all; max-width: 70%; }
+  .statusline {
+    margin-top: 16px; color: var(--muted); font-size: .85rem;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .spinner {
+    width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.15);
+    border-top-color: var(--cyan); border-radius: 50%;
+    animation: spin .7s linear infinite; display: none;
+  }
+  .spinner.on { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  a.link { color: var(--cyan); text-decoration: none; }
+  a.link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="logo">AT</div>
+        <div>
+          <h1>AgentTrust Live Evidence</h1>
+          <p class="sub">Policy → seal → witness → CI regression — real <code>nishanttyagi-agenttrust</code> run</p>
+        </div>
+      </div>
+      <div class="actions">
+        <span class="pill" id="pkg">package —</span>
+        <button id="run" type="button">▶ Run live demo</button>
+      </div>
+    </header>
+
+    <div class="grid" id="cards">
+      <div class="card"><div class="kicker">waiting</div><h3>Press Run</h3><p class="detail">Live subprocess: python -m agenttrust.demo</p><span class="badge wait"><span class="dot"></span> idle</span></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h2>Demo stdout</h2>
+        <pre id="log">Ready. Click Run live demo — this calls the installed package, not a mock.</pre>
+      </div>
+      <div class="panel">
+        <h2>Chain snapshot</h2>
+        <div class="meta" id="meta">
+          <div class="row"><span class="label">status</span><span class="value">idle</span></div>
+        </div>
+        <p class="statusline"><span class="spinner" id="spin"></span><span id="hint">Local only · http://127.0.0.1:8765</span></p>
+        <p class="statusline"><a class="link" id="reportLink" href="/last-report.html" style="display:none">Open last HTML report →</a></p>
+      </div>
+    </div>
+  </div>
+<script>
+const cardsEl = document.getElementById('cards');
+const logEl = document.getElementById('log');
+const metaEl = document.getElementById('meta');
+const runBtn = document.getElementById('run');
+const spin = document.getElementById('spin');
+const hint = document.getElementById('hint');
+const pkg = document.getElementById('pkg');
+const reportLink = document.getElementById('reportLink');
+
+pkg.textContent = 'nishanttyagi-agenttrust 0.1.0';
+
+function renderSteps(steps) {
+  if (!steps || !steps.length) return;
+  cardsEl.innerHTML = steps.map(s => {
+    const badge = s.ok
+      ? '<span class="badge pass"><span class="dot"></span> pass</span>'
+      : '<span class="badge fail"><span class="dot"></span> check</span>';
+    return `<div class="card ${s.tone||''}">
+      <div class="kicker">${s.clause||''}</div>
+      <h3>${s.title}</h3>
+      <p class="detail">${s.detail||''}</p>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+function renderMeta(data) {
+  const p = (data.parsed && data.parsed.kv) || {};
+  const rows = [
+    ['ok', String(!!data.ok)],
+    ['payment rule', p.rule_id || '—'],
+    ['witness', p.witness_matched || '—'],
+    ['adapter', p.adapter_id || '—'],
+    ['target', p.target_resource || '—'],
+    ['manifest', (p.manifest_hash || data.parsed?.manifest || '—').slice(0, 28) + '…'],
+  ];
+  metaEl.innerHTML = rows.map(([l,v]) =>
+    `<div class="row"><span class="label">${l}</span><span class="value">${v}</span></div>`
+  ).join('');
+}
+
+async function run() {
+  runBtn.disabled = true;
+  spin.classList.add('on');
+  hint.textContent = 'Running real agenttrust.demo…';
+  logEl.textContent = '…';
+  try {
+    const res = await fetch('/api/run', { method: 'POST' });
+    const data = await res.json();
+    logEl.textContent = data.raw || data.error || JSON.stringify(data, null, 2);
+    renderSteps(data.parsed && data.parsed.steps);
+    renderMeta(data);
+    reportLink.style.display = data.report_built || data.chain ? 'inline' : 'none';
+    hint.textContent = data.ok ? 'Demo finished · live package output' : 'Finished with errors — see stdout';
+  } catch (e) {
+    logEl.textContent = String(e);
+    hint.textContent = 'Request failed';
+  } finally {
+    runBtn.disabled = false;
+    spin.classList.remove('on');
+  }
+}
+
+runBtn.addEventListener('click', run);
+</script>
+</body>
+</html>

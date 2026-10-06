@@ -138,3 +138,8 @@ Earlier `agenttrust_stack-0.1.0` artifacts passed `twine check` and were not upl
 
 **Status:** Done locally (2026-10-07). `docs/adopt.md` and `examples/ci-drop-in/agenttrust.yml` match `.github/workflows/agenttrust.yml`. README links the page. No new service. pytest on this tree: **48 passed**.
 
+
+## Local Live Evidence UI
+
+**Status:** Done (2026-10-07). Added pps/ui/ (dark dashboard + server.py on 127.0.0.1:8765). Button runs a real python -m agenttrust.demo via sys.executable. Demo only — not a second control center. Not yet in a PyPI release bump.
+

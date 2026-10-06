@@ -185,6 +185,19 @@ The 2026-10-06 impact table above is an earlier local run (43 passed, hash `sha2
 
 Full notes: [docs/demo.md](docs/demo.md). Workflow: [`.github/workflows/agenttrust.yml`](.github/workflows/agenttrust.yml). Layout: [docs/adr/0004-install-and-evidence-artifact.md](docs/adr/0004-install-and-evidence-artifact.md).
 
+
+
+### Local Live Evidence UI
+
+Demo-only dashboard. Not a second control center.
+
+`ash
+python -m pip install -e ".[dev,karmasakshi]"
+python apps/ui/server.py
+`
+
+Open http://127.0.0.1:8765/ and click **Run live demo**. It runs a real python -m agenttrust.demo subprocess and shows policy / seal / witness / regression cards.
+
 ## Vision
 
 AgentTrust Stack becomes the release gate for any agent that can move money, send mail, delete data, or ship a release.

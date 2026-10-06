@@ -108,7 +108,7 @@ Human approval is an explicit act. The importer CLI exits 2 and writes nothing u
 | `apps/demo/` | script | Offline ₹1500 → Priya story. |
 | `apps/report/` | script | One HTML page from one chain. |
 
-Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/).
+Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/). Add this gate to a CI job: [docs/adopt.md](docs/adopt.md).
 
 ## Proof you can run
 
@@ -190,7 +190,7 @@ Next, in order:
 
 1. Pin `nishanttyagi-agenteval` to git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`. Done. PyPI is still 0.3.0. Exit 3 calls `compare_runs` from that pin. The `agenteval compare` CLI was not invoked.
 2. Keep the local text check only when that import fails. Stderr names the fallback.
-3. Attach KarmaSakshi seal and witness for `email.send`, `data.delete`, and `deploy.release`. The rule IDs already exist. Only `payment.transfer` is sealed today.
+3. `email.send` is sealed on `email.sandbox`. `data.delete` and `deploy.release` stay rule-only until upstream ships those effect types ([ADR 0006](docs/adr/0006-multi-action-seals.md)).
 4. Publish a sample evidence pack from a real GitHub Actions run of this workflow, so the README can cite a remote CI URL as well as the local 43-pass run.
 5. Keep PromptGate and VisionEval off the v1 path. A later product decision can attach them as siblings. They are not scheduled as forks.
 
@@ -198,7 +198,7 @@ Out of this product on purpose: a second approval inbox, a hosted trace platform
 
 ## Limits, stated so a buyer can price them
 
-- v1 witnesses simulated payments. The adapter id on the green path is `payment.simulator`.
+- v1 witnesses simulated payments (`payment.simulator`) and sandbox email (`email.sandbox`). `data.delete` and `deploy.release` are deny rules only. KarmaSakshi 0.2.0 has no adapter for those effect types. `sqlite.row.delete` is not relabeled as `data.delete`. See [docs/adr/0006-multi-action-seals.md](docs/adr/0006-multi-action-seals.md).
 - A missing CodeGovernor policy event imports as `unknown` and fails CI. It does not become an allow.
 - KarmaSakshi requires Python `>=3.10,<3.14`. On 3.14 the attach tests skip.
 - Manifest hashes are not golden constants. `prepare` draws a nonce.

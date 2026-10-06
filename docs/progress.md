@@ -118,3 +118,7 @@ Blocked: `data.delete` (`AT-DEL-001` only, `delete_seal=blocked`) and `deploy.re
 
 Payment hash on that demo run: `sha256:b343acc655d629f45d099b8ecb91c8d6acfab72f55e32cb100a290a2128b3adc`.
 
+## P4 — adoption kit
+
+**Status:** Done locally (2026-10-07). `docs/adopt.md` and `examples/ci-drop-in/agenttrust.yml` match `.github/workflows/agenttrust.yml`. README links the page. No new service. pytest on this tree: **48 passed**.
+

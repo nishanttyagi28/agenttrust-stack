@@ -186,8 +186,8 @@ Shipped in this repository:
 
 Next, in order:
 
-1. Pin `nishanttyagi-agenteval` to a reviewed git SHA. PyPI is still 0.3.0. The regression check in this repo matches golden `ground_truth` text locally. `agenteval compare` has not been executed here.
-2. Run fail 3 through that pinned AgentEval compare, and keep the local text check only as a fallback for the YAML shape this repo emits.
+1. Pin `nishanttyagi-agenteval` to git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`. Done. PyPI is still 0.3.0. Exit 3 calls `compare_runs` from that pin. The `agenteval compare` CLI was not invoked.
+2. Keep the local text check only when that import fails. Stderr names the fallback.
 3. Attach KarmaSakshi seal and witness for `email.send`, `data.delete`, and `deploy.release`. The rule IDs already exist. Only `payment.transfer` is sealed today.
 4. Publish a sample evidence pack from a real GitHub Actions run of this workflow, so the README can cite a remote CI URL as well as the local 43-pass run.
 5. Keep PromptGate and VisionEval off the v1 path. A later product decision can attach them as siblings. They are not scheduled as forks.
@@ -200,7 +200,7 @@ Out of this product on purpose: a second approval inbox, a hosted trace platform
 - A missing CodeGovernor policy event imports as `unknown` and fails CI. It does not become an allow.
 - KarmaSakshi requires Python `>=3.10,<3.14`. On 3.14 the attach tests skip.
 - Manifest hashes are not golden constants. `prepare` draws a nonce.
-- Exit 3 in this repo is the local ground-truth check described above.
+- Exit 3 calls `agenteval.core.compare.compare_runs` from git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (the function `agenteval compare` uses). It is not a claim that the `agenteval compare` CLI was invoked. If that package is missing, stderr says `agenteval compare unavailable; local ground_truth check`.
 - Nothing in the importer auto-approves a case.
 
 Research behind the scope: [docs/research/top20-comparison.md](docs/research/top20-comparison.md), [docs/research/gap-matrix.md](docs/research/gap-matrix.md). Status: [docs/progress.md](docs/progress.md).

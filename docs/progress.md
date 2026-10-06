@@ -86,14 +86,25 @@ README has an Alpha status line, the CI badge, and the existing green run https:
 
 `docs/demo.md` still describes the pre-fix install failure. The README is the current command.
 
+## P2 — AgentEval pin
+
+**Status:** Done locally (2026-10-07). SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (2026-10-02, package version 0.5.0). `python3.12 tests/demo/_entry_out/show_compare.py` printed:
+
+```text
+agenteval compare_runs passed=False reasons=['correctness dropped 100.0pp (allowed 5.0pp)']
+agenteval compare_runs passed=True reasons=[]
+```
+
+`settled 150100` against golden `blocked` fails. Replay `blocked` passes. `python3.12 -m pytest -q` → 46 passed. The `agenteval compare` CLI was not run. Fallback line remains if the import is missing.
+
 | ID | Status |
 |---|---|
 | A Install without PYTHONPATH | **Done** locally and on that Actions run. |
 | B Product README | **Done** after the artifact run. Badge and links point at `37513293615`. |
 | C Evidence-pack artifact | **Done.** `chain.json` + `report.html`. |
-| D AgentEval compare | Open. Exit 3 is still the local text check. |
+| D AgentEval compare | **Done** via `compare_runs` on SHA `99fa7a5`. CLI not invoked. |
 | E Email, delete, deploy seal | Open. Only payment is sealed. |
 | F Version 0.1.0 Alpha | **Done.** Private classifier removed. No PyPI upload. |
-| G ADRs | **0004 accepted.** 0005 not written. |
-| H Tests green on Actions | **Done** for this push. |
+| G ADRs | **0004 and 0005 accepted.** |
+| H Tests green on Actions | Green for `37513293615`. This P2 commit is not on Actions until push. |
 

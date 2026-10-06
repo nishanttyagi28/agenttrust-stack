@@ -14,7 +14,10 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
 ]
-dependencies = ["pydantic>=2.0,<3"]
+dependencies = [
+  "pydantic>=2.0,<3",
+  "nishanttyagi-agenteval @ git+https://github.com/nishanttyagi28/agenteval.git@99fa7a5f4edafd44acb6c68d23cb871eb539b7d7",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]

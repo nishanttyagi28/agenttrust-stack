@@ -192,12 +192,12 @@ Full notes: [docs/demo.md](docs/demo.md). Workflow: [`.github/workflows/agenttru
 
 Demo-only dashboard. Not a second control center.
 
-`ash
+```bash
 python -m pip install -e ".[dev,karmasakshi]"
 python apps/ui/server.py
-`
+```
 
-Open http://127.0.0.1:8765/ and click **Run live demo**. It runs a real python -m agenttrust.demo subprocess and shows policy / seal / witness / regression cards.
+Open http://127.0.0.1:8765/ and click **Run live demo**. It runs a real `python -m agenttrust.demo` subprocess and shows policy / seal / witness / regression cards.
 
 ## Vision
 

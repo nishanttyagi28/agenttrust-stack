@@ -18,10 +18,17 @@ dependencies = ["pydantic>=2.0,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+karmasakshi = ["karmasakshi-protocol>=0.2,<0.3"]
 
 [tool.setuptools.packages.find]
-where = ["packages/evidence", "packages/importers"]
+where = ["packages/evidence", "packages/importers", "packages/gate", "packages/ci"]
 include = ["agenttrust*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["packages/evidence", "packages/importers"]
+pythonpath = [
+  ".",
+  "packages/evidence",
+  "packages/importers",
+  "packages/gate",
+  "packages/ci",
+]

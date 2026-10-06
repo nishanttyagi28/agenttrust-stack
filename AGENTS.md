@@ -92,8 +92,9 @@ Write only:
 - `apps/demo/**`
 - `docs/demo.md`
 - `docs/progress.md`
+- `docs/adr/0006-multi-action-seals.md`
 
-Seal and witness `email.send`, `data.delete`, and `deploy.release` through KarmaSakshi reference adapters. Read the library. If an adapter is missing, stop and report. Deny never commits.
+Seal and witness through KarmaSakshi reference adapters that actually exist. If an adapter is missing, record the blocker. Deny never commits.
 
 ## P4 — Adoption kit
 

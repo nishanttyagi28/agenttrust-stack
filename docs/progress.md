@@ -88,7 +88,7 @@ README has an Alpha status line, the CI badge, and the existing green run https:
 
 ## P2 — AgentEval pin
 
-**Status:** Done locally (2026-10-07). SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (2026-10-02, package version 0.5.0). `python3.12 tests/demo/_entry_out/show_compare.py` printed:
+**Status:** Done (2026-10-07). Pushed. Actions https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545 succeeded. SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (2026-10-02, package version 0.5.0). `python3.12 tests/demo/_entry_out/show_compare.py` printed:
 
 ```text
 agenteval compare_runs passed=False reasons=['correctness dropped 100.0pp (allowed 5.0pp)']
@@ -106,5 +106,5 @@ agenteval compare_runs passed=True reasons=[]
 | E Email, delete, deploy seal | Open. Only payment is sealed. |
 | F Version 0.1.0 Alpha | **Done.** Private classifier removed. No PyPI upload. |
 | G ADRs | **0004 and 0005 accepted.** |
-| H Tests green on Actions | Green for `37513293615`. This P2 commit is not on Actions until push. |
+| H Tests green on Actions | **Done.** https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545 |
 

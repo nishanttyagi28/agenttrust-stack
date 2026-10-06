@@ -6,6 +6,8 @@
 
 Green Actions run `37513293615` (commit `4c3ac8c`, 45 passed, evidence pack uploaded): https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615
 
+Later green run with the AgentEval pin, `37514451545`: https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545
+
 Artifact `evidence-pack` (chain JSON + HTML, 1022 bytes): https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615/artifacts/11436485460
 
 The control record for consequential agent actions. A payment, an email, a delete, or a release does not ship unless policy allowed it, a human sealed the exact effect, an independent witness confirmed the outcome, and any failure is an approved CI regression.

@@ -8,6 +8,8 @@ Product claim: a consequential action cannot ship unless policy allowed it, a hu
 
 Backlog order: evidence schema, importers, failure-to-YAML, consequential gate, KarmaSakshi attach, CI check, offline demo, evidence report.
 
+Impact sprint (do not reopen locked decisions): P0 product surface, P1 install and CI evidence pack, P2 AgentEval pin and compare, P3 email/delete/deploy seal, P4 adoption kit. Stop after P0 until a human says OK.
+
 ## Architect
 
 Write only:
@@ -36,6 +38,72 @@ Write only `packages/gate/**`, `packages/ci/**`, `.github/workflows/agenttrust.y
 ## Demo and report
 
 Write only `apps/demo/**`, `apps/report/**`, `docs/demo.md`, `README.md`, and `tests/demo/**`. Offline ₹1500→Priya path. One JSON report and one HTML page. Numbers in the README must come from a real run.
+
+## P0 — Product surface
+
+Write only:
+
+- `README.md`
+- `docs/demo.md`
+- `docs/progress.md`
+
+Product README, dated demo numbers, and a GitHub description note inside `docs/progress.md`. No product code. Do not invent a CI run URL.
+
+## P1 — Install and CI evidence pack
+
+Write only:
+
+- `pyproject.toml`
+- `packages/evidence/**`
+- `packages/importers/**`
+- `packages/gate/**`
+- `packages/ci/**`
+- `apps/demo/**`
+- `apps/report/**`
+- `.github/workflows/agenttrust.yml`
+- `tests/**`
+- `docs/adr/0004-install-and-evidence-artifact.md`
+- `docs/progress.md`
+- `README.md` (badge and artifact links only, after a green Actions run)
+
+Editable install, version `0.1.0`, Alpha classifier, demo/report entrypoints, workflow artifact `evidence-pack/`. No PyPI upload.
+
+## P2 — AgentEval pin and compare
+
+Write only:
+
+- `pyproject.toml`
+- `packages/ci/**`
+- `packages/importers/**`
+- `tests/ci/**`
+- `tests/fixtures/**`
+- `docs/adr/0005-agenteval-pin.md`
+- `docs/progress.md`
+
+Pin a reviewed AgentEval git SHA. Exit 3 uses `agenteval compare` when that pin is present. Fallback must log that compare did not run.
+
+## P3 — Multi-action seal surface
+
+Write only:
+
+- `packages/gate/**`
+- `tests/gate/**`
+- `apps/demo/**`
+- `docs/demo.md`
+- `docs/progress.md`
+
+Seal and witness `email.send`, `data.delete`, and `deploy.release` through KarmaSakshi reference adapters. Read the library. If an adapter is missing, stop and report. Deny never commits.
+
+## P4 — Adoption kit
+
+Write only:
+
+- `docs/adopt.md`
+- `examples/ci-drop-in/**`
+- `README.md`
+- `docs/progress.md`
+
+One page and a copy-paste CI snippet that matches what P1 shipped. No new service.
 
 ## Shared rules
 

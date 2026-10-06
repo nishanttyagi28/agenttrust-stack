@@ -44,6 +44,47 @@ AGENTS: dict[str, tuple[str, ...]] = {
         "README.md",
         "tests/demo/**",
     ),
+    "p0": (
+        "README.md",
+        "docs/demo.md",
+        "docs/progress.md",
+    ),
+    "p1": (
+        "pyproject.toml",
+        "packages/evidence/**",
+        "packages/importers/**",
+        "packages/gate/**",
+        "packages/ci/**",
+        "apps/demo/**",
+        "apps/report/**",
+        ".github/workflows/agenttrust.yml",
+        "tests/**",
+        "docs/adr/0004-install-and-evidence-artifact.md",
+        "docs/progress.md",
+        "README.md",
+    ),
+    "p2": (
+        "pyproject.toml",
+        "packages/ci/**",
+        "packages/importers/**",
+        "tests/ci/**",
+        "tests/fixtures/**",
+        "docs/adr/0005-agenteval-pin.md",
+        "docs/progress.md",
+    ),
+    "p3": (
+        "packages/gate/**",
+        "tests/gate/**",
+        "apps/demo/**",
+        "docs/demo.md",
+        "docs/progress.md",
+    ),
+    "p4": (
+        "docs/adopt.md",
+        "examples/ci-drop-in/**",
+        "README.md",
+        "docs/progress.md",
+    ),
 }
 
 

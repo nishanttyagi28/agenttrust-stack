@@ -12,6 +12,7 @@ from agenttrust.gate import (
     AT_PAY_001,
     AT_PAY_002,
     Intent,
+    attach_email,
     attach_payment,
     chain_for_decision,
     decide,
@@ -81,5 +82,32 @@ def test_attach_does_not_commit_a_wrong_amount() -> None:
         chain_id="priya-bad",
     )
     assert chain.decision.rule_id == AT_PAY_001
+    assert chain.effect_ref is None
+    assert chain.witness is None
+
+
+MAIL = Intent(EffectType.email_send, "priya@example.com")
+
+
+def test_attach_email_seals_matching_recipient() -> None:
+    pytest.importorskip("karmasakshi")
+    chain = attach_email(MAIL, MAIL, chain_id="mail-ok")
+    assert chain.decision.outcome == DecisionOutcome.allow
+    assert chain.effect_ref is not None
+    assert chain.effect_ref.effect_type == EffectType.email_send
+    assert chain.effect_ref.adapter_id == "email.sandbox"
+    assert chain.effect_ref.target_resource == "email:priya@example.com"
+    assert chain.witness is not None
+    assert chain.witness.matched_expected is True
+
+
+def test_attach_email_does_not_commit_a_wrong_recipient() -> None:
+    pytest.importorskip("karmasakshi")
+    chain = attach_email(
+        MAIL,
+        Intent(EffectType.email_send, "ravi@example.com"),
+        chain_id="mail-bad",
+    )
+    assert chain.decision.rule_id == AT_MAIL_001
     assert chain.effect_ref is None
     assert chain.witness is None

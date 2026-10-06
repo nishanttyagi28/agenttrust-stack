@@ -103,8 +103,18 @@ agenteval compare_runs passed=True reasons=[]
 | B Product README | **Done** after the artifact run. Badge and links point at `37513293615`. |
 | C Evidence-pack artifact | **Done.** `chain.json` + `report.html`. |
 | D AgentEval compare | **Done** via `compare_runs` on SHA `99fa7a5`. CLI not invoked. |
-| E Email, delete, deploy seal | Open. Only payment is sealed. |
+| E Email, delete, deploy seal | Email sealed on `email.sandbox`. Delete and deploy blocked. ADR 0006. |
 | F Version 0.1.0 Alpha | **Done.** Private classifier removed. No PyPI upload. |
-| G ADRs | **0004 and 0005 accepted.** |
-| H Tests green on Actions | **Done.** https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545 |
+| G ADRs | **0004, 0005, and 0006 accepted.** |
+| H Tests green on Actions | **Done** for https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545. The multi-action push is recorded after it is green. |
+
+## P3 — multi-action seals
+
+**Status:** Done locally (2026-10-07). `python -m pytest -q` → **48 passed**. Read `reference_adapter_capabilities` in karmasakshi-protocol 0.2.0.
+
+Sealed: `payment.transfer` on `payment.simulator`, `email.send` on `email.sandbox`. `python -m agenttrust.demo` printed `email_red_exit=1`, `email_green_exit=0`, `email_witness_matched=True`, `email_target_resource=email:priya@example.com`.
+
+Blocked: `data.delete` (`AT-DEL-001` only, `delete_seal=blocked`) and `deploy.release` (`AT-DEP-001` only, `deploy_seal=blocked`). No upstream adapter. `sqlite.row.delete` was not aliased. ADR 0006.
+
+Payment hash on that demo run: `sha256:b343acc655d629f45d099b8ecb91c8d6acfab72f55e32cb100a290a2128b3adc`.
 

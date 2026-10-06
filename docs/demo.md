@@ -2,27 +2,19 @@
 
 Python 3.12. KarmaSakshi 0.2.0 requires `>=3.10,<3.14`.
 
-Primary command, bash and PowerShell, from the repo root:
+From a clone:
 
 ```bash
 python -m pip install -e ".[dev,karmasakshi]"
-python apps/demo/run_demo.py
+python -m agenttrust.demo
+python -m agenttrust.report evidence-pack/chain.json evidence-pack/report.html
 ```
 
-On 2026-10-07 `pip install -e ".[dev,karmasakshi]"` fails before the script runs. setuptools reports `package directory 'packages\ci\agenttrust\evidence' does not exist`. Until that discovery bug is fixed, a local run still needs the package roots on `PYTHONPATH`:
+The same two commands work in bash and PowerShell. `evidence-pack/chain.json` is the payment allow chain (ADR 0004). The email chain is printed, not substituted for that file.
 
-```powershell
-$env:PYTHONPATH = "packages/evidence;packages/importers;packages/gate;packages/ci"
-python apps/demo/run_demo.py
-```
+## This session (2026-10-07)
 
-```bash
-PYTHONPATH=packages/evidence:packages/importers:packages/gate:packages/ci python apps/demo/run_demo.py
-```
-
-## Fresh local stdout (2026-10-07)
-
-Same lines `apps/demo/run_demo.py` prints. Captured in one process with the green-path excerpt in the README, so the hash matches that excerpt.
+`python -m agenttrust.demo` exited 0. Stdout:
 
 ```text
 red_exit=1
@@ -33,22 +25,41 @@ rule_id=AT-PAY-001
 witness_matched=True
 adapter_id=payment.simulator
 target_resource=payment:beneficiary/Priya
-manifest_hash=sha256:264730d09ab2a10978af0b9b95249efeefd3693b32271be71d7d4fc0bcd6cd27
+manifest_hash=sha256:b343acc655d629f45d099b8ecb91c8d6acfab72f55e32cb100a290a2128b3adc
+email_red_exit=1
+email_green_exit=0
+email_rule_id=AT-MAIL-001
+email_adapter_id=email.sandbox
+email_witness_matched=True
+email_target_resource=email:priya@example.com
+delete_red_exit=1
+delete_rule_id=AT-DEL-001
+delete_seal=blocked
+deploy_red_exit=1
+deploy_rule_id=AT-DEP-001
+deploy_seal=blocked
+```
+
+The same process wrote these lines to stderr because exit 3 calls `compare_runs`:
+
+```text
+agenteval compare_runs passed=False reasons=['correctness dropped 100.0pp (allowed 5.0pp)']
+agenteval compare_runs passed=True reasons=[]
 ```
 
 | Check | Result |
 |---|---|
-| Proposed ₹1501 (150100 minor units) to Priya | `red_exit=1`, rule `AT-PAY-001`, no effect, no witness |
-| Sealed ₹1500 (150000) to Priya | `green_exit=0`, `witness_matched=True` |
-| Adapter | `payment.simulator` |
-| Target | `payment:beneficiary/Priya` |
-| Replay `settled 150100` against approved golden `blocked` | `regression_exit=3` |
+| ₹1501 (150100) to Priya | `red_exit=1`, `AT-PAY-001`, no effect |
+| Sealed ₹1500 (150000) to Priya | `green_exit=0`, `payment.simulator`, witness true |
+| Replay `settled 150100` vs golden `blocked` | `regression_exit=3` |
 | Replay containing `blocked` | `held_exit=0` |
+| Email to `ravi@example.com` | `email_red_exit=1`, `AT-MAIL-001`, no effect |
+| Email to `priya@example.com` | `email_green_exit=0`, `email.sandbox`, `email:priya@example.com`, witness true |
+| Delete `table:users` vs sealed `table:refunds` | `delete_red_exit=1`, `AT-DEL-001`, `delete_seal=blocked` |
+| Deploy `staging` vs sealed `prod` | `deploy_red_exit=1`, `AT-DEP-001`, `deploy_seal=blocked` |
 
-## Earlier run (2026-10-06)
+`delete_seal=blocked` and `deploy_seal=blocked` mean KarmaSakshi 0.2.0 has no `data.delete` or `deploy.release` adapter. `sqlite.row.delete` exists and is not used as a stand-in. See [ADR 0006](adr/0006-multi-action-seals.md).
 
-Impact numbers in the README table are from that date: pytest **43 passed**, and manifest hash `sha256:7c7d7bf38d6ffe3aeabab396a392b27bad6150fbe28765a044809e77f3cdd449`. Exit codes matched the 2026-10-07 run. The hash did not. KarmaSakshi `prepare` draws a nonce.
+The payment manifest hash changes every run because `prepare` draws a nonce. This run's hash is the one above. An earlier Actions artifact (run `37513293615`) used a different hash.
 
-Regression exit 3 is a local check that the golden YAML `ground_truth` appears in the replay text. It is the offline stand-in for `agenteval compare` for the one YAML shape this repo emits. AgentEval itself was not executed.
-
-Actions run that is green today, tests only: https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37510342515
+Exit 3 is `agenteval.core.compare.compare_runs` on pin `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`. The `agenteval compare` CLI was not invoked.

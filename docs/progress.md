@@ -28,7 +28,7 @@ Architecture note and ADRs written. No product code.
 
 | # | Gap | Status |
 |---|---|---|
-| 1 | Evidence Schema v1 | **Specified** in ADR 0002 — not implemented |
+| 1 | Evidence Schema v1 | **Done** — `agenttrust.evidence`, 17 round-trip tests |
 | 2 | Importers from existing repos | [ ] |
 | 3 | Deny / witness-mismatch → candidate → human approve → YAML | [ ] |
 | 4 | Consequential-action Decision records (gate) | [ ] |
@@ -45,6 +45,10 @@ Architecture note and ADRs written. No product code.
 
 None. AgentEval git SHA pin deferred to first importer PR per ADR 0001.
 
+## Evidence slice
+
+**Status:** Done (2026-10-06). Orchestrator re-ran `pytest tests/evidence`: 17 passed. Allowlist: 10 paths.
+
 ### Next agent
 
-**Evidence** — implement `packages/evidence/` per ADR 0002 (`pydantic>=2.0,<3`, round-trip tests).
+**Importers** — map AgentEval, KarmaSakshi, and CodeGovernor fixtures into `Chain`. Not started.

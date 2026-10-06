@@ -13,7 +13,7 @@ Exits from `python -m agenttrust.ci`:
 
 Copy [examples/ci-drop-in/agenttrust.yml](../examples/ci-drop-in/agenttrust.yml) into `.github/workflows/`. It is the workflow this repository runs on `main`.
 
-Requires Python 3.12. `karmasakshi-protocol` 0.2.0 does not install on 3.14. The install pulls the AgentEval pin in `pyproject.toml` because exit 3 imports `compare_runs`.
+Requires Python 3.12. `karmasakshi-protocol` 0.2.0 does not install on 3.14. The PyPI distribution is `nishanttyagi-agenttrust` (`pip install nishanttyagi-agenttrust`). PyPI rejected `agenttrust-stack` as too similar. Imports stay `agenttrust`. The dependency `nishanttyagi-agenteval>=0.5.0,<0.6` is what exit 3 imports as `compare_runs`. A clone of this repo still uses the editable install below.
 
 ```bash
 python -m pip install -e ".[dev,karmasakshi]"

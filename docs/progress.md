@@ -120,17 +120,19 @@ Payment hash on that demo run: `sha256:b343acc655d629f45d099b8ecb91c8d6acfab72f5
 
 ## PyPI readiness
 
-**Status:** AgentEval path complete (2026-10-07). `agenttrust-stack` is still not published. ADR 0007.
+**Status:** Publishing `nishanttyagi-agenttrust` 0.1.0 (2026-10-07). ADR 0007.
 
 1. **Done.** `nishanttyagi-agenteval` **0.5.0** is on PyPI: https://pypi.org/project/nishanttyagi-agenteval/0.5.0/. Provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`.
 2. **Done.** This repo depends on `nishanttyagi-agenteval>=0.5.0,<0.6`. The git URL is gone.
-3. **Not done.** `agenttrust-stack` upload still requires the human message exactly `upload now`. No `twine upload`. No `v0.1.0` tag. `pip install agenttrust-stack` is not live.
+3. **This change.** PyPI rejected `agenttrust-stack` as too similar. The distribution name is `nishanttyagi-agenttrust`. Imports stay `agenttrust`. Trusted Publisher workflow `.github/workflows/publish.yml` runs on tag `v*` with environment (Any). No `twine upload`. No token in the repo.
 
 Exit 3 still calls `agenteval.core.compare.compare_runs`. If that import is missing, stderr is `agenteval compare unavailable; local ground_truth check`.
 
 Fresh venv `pip install -e ".[dev,karmasakshi]"` installed `nishanttyagi-agenteval==0.5.0`. `python3.12 -m pytest -q` → **48 passed**. Import proof printed `0.5.0` and `agenteval.core.compare.compare_runs`.
 
-`python3.12 -m build` produced `dist/agenttrust_stack-0.1.0.tar.gz` and `dist/agenttrust_stack-0.1.0-py3-none-any.whl`. `twine check dist/*` → **PASSED**. Wheel `Requires-Dist` is `nishanttyagi-agenteval<0.6,>=0.5.0`. No direct URL. No upload.
+Earlier `agenttrust_stack-0.1.0` artifacts passed `twine check` and were not uploaded.
+
+`python3.12 -m build` for the renamed project produced `dist/nishanttyagi_agenttrust-0.1.0.tar.gz` and `dist/nishanttyagi_agenttrust-0.1.0-py3-none-any.whl`. `twine check dist/*` → **PASSED**. Wheel `Name: nishanttyagi-agenttrust`, `Version: 0.1.0`. `Requires-Dist` is `nishanttyagi-agenteval<0.6,>=0.5.0` plus the optional extras. No git URL.
 
 ## P4 — adoption kit
 

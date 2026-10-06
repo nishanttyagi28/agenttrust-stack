@@ -1,6 +1,6 @@
 # AgentTrust Stack
 
-**Status: Alpha (`0.1.0`).** Not published to PyPI.
+**Status: Alpha (`0.1.0`).** PyPI: [`nishanttyagi-agenttrust`](https://pypi.org/project/nishanttyagi-agenttrust/).
 
 [![agenttrust](https://github.com/nishanttyagi28/agenttrust-stack/actions/workflows/agenttrust.yml/badge.svg)](https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615)
 
@@ -112,17 +112,15 @@ Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](doc
 
 ## Install
 
-**Alpha. Simulators only. Not on PyPI.** `pip install agenttrust-stack` does not work until a human publishes it. This commit does not upload.
+**Alpha. Simulators only.** The PyPI distribution is `nishanttyagi-agenttrust`. PyPI rejected `agenttrust-stack` as too similar to an existing project. Imports stay `agenttrust`.
 
-The core dependency is PyPI `nishanttyagi-agenteval>=0.5.0,<0.6` ([0.5.0](https://pypi.org/project/nishanttyagi-agenteval/0.5.0/), provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`). Exit 3 calls `compare_runs` from that package. `agenttrust-stack` itself is still not published. See [docs/adr/0007-pypi.md](docs/adr/0007-pypi.md).
-
-What each install is for after this package is published. None of these are live index commands today.
+The core dependency is PyPI `nishanttyagi-agenteval>=0.5.0,<0.6` ([0.5.0](https://pypi.org/project/nishanttyagi-agenteval/0.5.0/), provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`). Exit 3 calls `compare_runs` from that package. See [docs/adr/0007-pypi.md](docs/adr/0007-pypi.md).
 
 | Command | Unlocks |
 |---|---|
-| `pip install agenttrust-stack` | Evidence, gate, CI, and the demo/report entrypoints. Exit 3 calls `compare_runs` when AgentEval imports. |
-| `pip install "agenttrust-stack[karmasakshi]"` | The row above, plus KarmaSakshi seal and witness on the payment and email simulators. |
-| `pip install "agenttrust-stack[dev,karmasakshi]"` | The row above, plus pytest. |
+| `pip install nishanttyagi-agenttrust` | Evidence, gate, CI, and the demo/report entrypoints. Exit 3 calls `compare_runs` when AgentEval imports. |
+| `pip install "nishanttyagi-agenttrust[karmasakshi]"` | The row above, plus KarmaSakshi seal and witness on the payment and email simulators. |
+| `pip install "nishanttyagi-agenttrust[dev,karmasakshi]"` | The row above, plus pytest. |
 
 There is no `[agenteval]` extra. AgentEval is a direct PyPI dependency, not an optional one.
 
@@ -225,7 +223,7 @@ Out of this product on purpose: a second approval inbox, a hosted trace platform
 - KarmaSakshi requires Python `>=3.10,<3.14`. On 3.14 the attach tests skip.
 - Manifest hashes are not golden constants. `prepare` draws a nonce.
 - Exit 3 calls `agenteval.core.compare.compare_runs` from `nishanttyagi-agenteval` 0.5.0 (provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`, the function `agenteval compare` uses). It is not a claim that the `agenteval compare` CLI was invoked. If that package is missing, stderr says `agenteval compare unavailable; local ground_truth check`.
-- This package is not on PyPI. AgentEval 0.5.0 is. Uploading `agenttrust-stack` still requires the human message `upload now`. No `v0.1.0` tag exists.
+- The PyPI name is `nishanttyagi-agenttrust` 0.1.0. PyPI rejected `agenttrust-stack` as too similar. Imports stay `agenttrust`. AgentEval 0.5.0 is the direct dependency. Publish is GitHub Trusted Publisher on tag `v*`, with no token in this repo.
 - Nothing in the importer auto-approves a case.
 
 Research behind the scope: [docs/research/top20-comparison.md](docs/research/top20-comparison.md), [docs/research/gap-matrix.md](docs/research/gap-matrix.md). Status: [docs/progress.md](docs/progress.md).

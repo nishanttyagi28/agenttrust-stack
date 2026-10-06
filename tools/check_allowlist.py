@@ -71,6 +71,7 @@ AGENTS: dict[str, tuple[str, ...]] = {
         "tests/fixtures/**",
         "docs/adr/0005-agenteval-pin.md",
         "docs/progress.md",
+        "README.md",
     ),
     "p3": (
         "packages/gate/**",

@@ -79,6 +79,7 @@ Write only:
 - `tests/fixtures/**`
 - `docs/adr/0005-agenteval-pin.md`
 - `docs/progress.md`
+- `README.md` (limits line for compare only)
 
 Pin a reviewed AgentEval git SHA. Exit 3 uses `agenteval compare` when that pin is present. Fallback must log that compare did not run.
 

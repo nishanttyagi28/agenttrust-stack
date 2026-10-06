@@ -12,3 +12,5 @@ build/
 .coverage
 htmlcov/
 tests/importers/_cli_tmp/
+tests/demo/_entry_out/
+evidence-pack/

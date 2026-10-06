@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agenttrust-stack"
+version = "0.0.0"
+description = "Thin evidence chain across policy, sealed effect, witness, and CI regression. No runtime dependencies until an ADR allows them."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Nishant Tyagi" }]
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Private :: Do Not Upload",
+]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["packages"]
+include = ["agenttrust*"]

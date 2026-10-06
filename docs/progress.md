@@ -106,11 +106,11 @@ agenteval compare_runs passed=True reasons=[]
 | E Email, delete, deploy seal | Email sealed on `email.sandbox`. Delete and deploy blocked. ADR 0006. |
 | F Version 0.1.0 Alpha | **Done.** Private classifier removed. No PyPI upload. |
 | G ADRs | **0004, 0005, and 0006 accepted.** |
-| H Tests green on Actions | **Done** for https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37514451545. The multi-action push is recorded after it is green. |
+| H Tests green on Actions | **Done.** https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37515733559 (48 passed). |
 
 ## P3 — multi-action seals
 
-**Status:** Done locally (2026-10-07). `python -m pytest -q` → **48 passed**. Read `reference_adapter_capabilities` in karmasakshi-protocol 0.2.0.
+**Status:** Done (2026-10-07). Pushed. Actions https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37515733559 succeeded: **48 passed**, demo printed `email_green_exit=0`, `delete_seal=blocked`, `deploy_seal=blocked`. Read `reference_adapter_capabilities` in karmasakshi-protocol 0.2.0.
 
 Sealed: `payment.transfer` on `payment.simulator`, `email.send` on `email.sandbox`. `python -m agenttrust.demo` printed `email_red_exit=1`, `email_green_exit=0`, `email_witness_matched=True`, `email_target_resource=email:priya@example.com`.
 

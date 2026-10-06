@@ -107,6 +107,7 @@ Human approval is an explicit act. The importer CLI exits 2 and writes nothing u
 | `packages/ci/` | `agenttrust.ci` | Exit 0, 1, 2, or 3. |
 | `apps/demo/` | script | Offline ₹1500 → Priya story. |
 | `apps/report/` | script | One HTML page from one chain. |
+| `apps/ui/` | local server | Live Evidence dashboard (demo only, not a second control center). |
 
 Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/). Add this gate to a CI job: [docs/adopt.md](docs/adopt.md).
 

@@ -11,3 +11,4 @@ build/
 *.db
 .coverage
 htmlcov/
+tests/importers/_cli_tmp/

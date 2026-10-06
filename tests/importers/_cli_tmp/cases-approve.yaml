@@ -1,7 +1,0 @@
-- id: ae-tr_demo
-  prompt: "Refund order 4821"
-  expects:
-    correctness_type: contains
-    ground_truth: "failed"
-    must_not_hallucinate: true
-    must_call_tools: []

@@ -118,6 +118,20 @@ Blocked: `data.delete` (`AT-DEL-001` only, `delete_seal=blocked`) and `deploy.re
 
 Payment hash on that demo run: `sha256:b343acc655d629f45d099b8ecb91c8d6acfab72f55e32cb100a290a2128b3adc`.
 
+## PyPI readiness
+
+**Status:** Blocked (2026-10-07). Path 1. `pip index versions nishanttyagi-agenteval` returned **0.3.0** (also 0.2.0, 0.1.0). The pin in this repo is **0.5.0** at SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`. `agenttrust-stack` is not on PyPI. ADR 0007. The git URL stays. No `twine upload`. No `v0.1.0` tag.
+
+Publish order when a human is ready, not in this commit:
+
+1. Publish `nishanttyagi-agenteval` 0.5.0 from the agenteval repo (the release that contains `compare_runs`).
+2. Change this dependency to `nishanttyagi-agenteval>=0.5.0,<0.6`. Keep the SHA in ADR 0007 as provenance.
+3. Only after the human message is exactly `upload now`: put a PyPI API token in the environment (never commit it) and run `twine upload dist/*`, or configure a GitHub Trusted Publisher. Then tag `v0.1.0` and make `pip install agenttrust-stack` the primary install line in the README.
+
+Exit 3 fallback verified in `packages/ci/agenttrust/ci/check.py`: missing import logs `agenteval compare unavailable; local ground_truth check`.
+
+`python -m build` produced `dist/agenttrust_stack-0.1.0.tar.gz` and `dist/agenttrust_stack-0.1.0-py3-none-any.whl`. `twine check dist/*` → **PASSED** for both. That check does not make the git dependency uploadable. A fresh venv `pip install dist/agenttrust_stack-0.1.0-py3-none-any.whl[karmasakshi]` imported `agenttrust.evidence`, `agenttrust.gate`, `agenttrust.ci`, and `karmasakshi`. The wheel still pulled AgentEval 0.5.0 from the git pin.
+
 ## P4 — adoption kit
 
 **Status:** Done locally (2026-10-07). `docs/adopt.md` and `examples/ci-drop-in/agenttrust.yml` match `.github/workflows/agenttrust.yml`. README links the page. No new service. pytest on this tree: **48 passed**.

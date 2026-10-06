@@ -110,6 +110,28 @@ Human approval is an explicit act. The importer CLI exits 2 and writes nothing u
 
 Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/). Add this gate to a CI job: [docs/adopt.md](docs/adopt.md).
 
+## Install
+
+**Alpha. Simulators only. Not on PyPI.** `pip install agenttrust-stack` does not work until a human publishes it. This commit does not upload.
+
+PyPI has `nishanttyagi-agenteval` **0.3.0**. Exit 3 needs `compare_runs` from git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (package 0.5.0). A direct git URL cannot be uploaded to PyPI, so the core dependency stays that URL until AgentEval 0.5.0 is published from its own repo. Then this package can depend on `nishanttyagi-agenteval>=0.5.0,<0.6`. See [docs/adr/0007-pypi.md](docs/adr/0007-pypi.md).
+
+What each install is for, once that PyPI pin exists. None of these are live index commands today.
+
+| Command | Unlocks |
+|---|---|
+| `pip install agenttrust-stack` | Evidence, gate, CI, and the demo/report entrypoints. Exit 3 calls `compare_runs` when AgentEval imports. |
+| `pip install "agenttrust-stack[karmasakshi]"` | The row above, plus KarmaSakshi seal and witness on the payment and email simulators. |
+| `pip install "agenttrust-stack[dev,karmasakshi]"` | The row above, plus pytest. |
+
+There is no `[agenteval]` extra. AgentEval is a direct dependency, not an optional one, and today that dependency is the git pin.
+
+Supported command now, from a clone, bash and PowerShell:
+
+```bash
+python -m pip install -e ".[dev,karmasakshi]"
+```
+
 ## Proof you can run
 
 Python 3.12. KarmaSakshi 0.2.0 installs on `>=3.10,<3.14`.
@@ -203,6 +225,7 @@ Out of this product on purpose: a second approval inbox, a hosted trace platform
 - KarmaSakshi requires Python `>=3.10,<3.14`. On 3.14 the attach tests skip.
 - Manifest hashes are not golden constants. `prepare` draws a nonce.
 - Exit 3 calls `agenteval.core.compare.compare_runs` from git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (the function `agenteval compare` uses). It is not a claim that the `agenteval compare` CLI was invoked. If that package is missing, stderr says `agenteval compare unavailable; local ground_truth check`.
+- This package is not on PyPI. PyPI AgentEval is 0.3.0. The git dependency blocks an upload until AgentEval 0.5.0 is published and this pin becomes `nishanttyagi-agenteval>=0.5.0,<0.6`.
 - Nothing in the importer auto-approves a case.
 
 Research behind the scope: [docs/research/top20-comparison.md](docs/research/top20-comparison.md), [docs/research/gap-matrix.md](docs/research/gap-matrix.md). Status: [docs/progress.md](docs/progress.md).

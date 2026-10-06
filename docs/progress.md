@@ -82,7 +82,18 @@ README has an Alpha status line, the CI badge, and the existing green run https:
 
 ## P1 — install and evidence pack
 
-**Status:** In progress (2026-10-07).
+**Status:** Done (2026-10-07). Pushed. Actions run https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615 succeeded. 45 passed. Artifact https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615/artifacts/11436485460 (`evidence-pack`, 1022 bytes). Demo log hash `sha256:e1d380c3105cd715bcd4e37c835f7cdcf6c900f7edb69e7ca9329fa101867372`. Not published to PyPI.
 
-ADR 0004 locks explicit `package-dir` entries, `python -m agenttrust.demo` / `python -m agenttrust.report`, version `0.1.0` Alpha, and `evidence-pack/chain.json` + `evidence-pack/report.html`. Not published to PyPI. Actions URL for the artifact run is filled after the workflow is green.
+`docs/demo.md` still describes the pre-fix install failure. The README is the current command.
+
+| ID | Status |
+|---|---|
+| A Install without PYTHONPATH | **Done** locally and on that Actions run. |
+| B Product README | **Done** after the artifact run. Badge and links point at `37513293615`. |
+| C Evidence-pack artifact | **Done.** `chain.json` + `report.html`. |
+| D AgentEval compare | Open. Exit 3 is still the local text check. |
+| E Email, delete, deploy seal | Open. Only payment is sealed. |
+| F Version 0.1.0 Alpha | **Done.** Private classifier removed. No PyPI upload. |
+| G ADRs | **0004 accepted.** 0005 not written. |
+| H Tests green on Actions | **Done** for this push. |
 

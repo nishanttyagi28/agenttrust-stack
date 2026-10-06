@@ -1,10 +1,12 @@
 # AgentTrust Stack
 
-**Status: Alpha.** Metadata in `pyproject.toml` is still `0.0.0` / Planning, and this repo is not published to PyPI. The buyer document below is current. The editable-install entrypoint is the supported command; on 2026-10-07 that install still fails in setuptools, and the demo stdout was captured without it (see Proof).
+**Status: Alpha (`0.1.0`).** Not published to PyPI.
 
-[![agenttrust](https://github.com/nishanttyagi28/agenttrust-stack/actions/workflows/agenttrust.yml/badge.svg)](https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37510342515)
+[![agenttrust](https://github.com/nishanttyagi28/agenttrust-stack/actions/workflows/agenttrust.yml/badge.svg)](https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615)
 
-Green Actions run, commit `97b52f3`, tests only, no evidence artifact yet: https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37510342515
+Green Actions run `37513293615` (commit `4c3ac8c`, 45 passed, evidence pack uploaded): https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615
+
+Artifact `evidence-pack` (chain JSON + HTML, 1022 bytes): https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37513293615/artifacts/11436485460
 
 The control record for consequential agent actions. A payment, an email, a delete, or a release does not ship unless policy allowed it, a human sealed the exact effect, an independent witness confirmed the outcome, and any failure is an approved CI regression.
 
@@ -110,15 +112,16 @@ Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](doc
 
 Python 3.12. KarmaSakshi 0.2.0 installs on `>=3.10,<3.14`.
 
-Primary, bash and PowerShell:
+Primary, bash and PowerShell, from a clone:
 
 ```bash
 python -m pip install -e ".[dev,karmasakshi]"
 python -m pytest -q
-python apps/demo/run_demo.py
+python -m agenttrust.demo
+python -m agenttrust.report evidence-pack/chain.json evidence-pack/report.html
 ```
 
-On 2026-10-07 that editable install stops in setuptools with `package directory 'packages\ci\agenttrust\evidence' does not exist`. The four package roots are still how a local run imports `agenttrust` until the install slice fixes discovery. The stdout below is from one process that prints the same lines as `apps/demo/run_demo.py`, dated 2026-10-07, Python 3.12:
+That install is what Actions ran. Demo stdout from run `37513293615` at `2026-10-06T18:42:12Z`, Python 3.12.14:
 
 ```text
 red_exit=1
@@ -129,10 +132,10 @@ rule_id=AT-PAY-001
 witness_matched=True
 adapter_id=payment.simulator
 target_resource=payment:beneficiary/Priya
-manifest_hash=sha256:264730d09ab2a10978af0b9b95249efeefd3693b32271be71d7d4fc0bcd6cd27
+manifest_hash=sha256:e1d380c3105cd715bcd4e37c835f7cdcf6c900f7edb69e7ca9329fa101867372
 ```
 
-Green-path excerpt from that same run (ids omitted; hash matches the stdout):
+Green-path excerpt from the uploaded `evidence-pack/chain.json` of that same run (ids omitted; hash matches the stdout):
 
 ```json
 {
@@ -147,7 +150,7 @@ Green-path excerpt from that same run (ids omitted; hash matches the stdout):
     "effect_type": "payment.transfer",
     "adapter_id": "payment.simulator",
     "target_resource": "payment:beneficiary/Priya",
-    "manifest_hash": "sha256:264730d09ab2a10978af0b9b95249efeefd3693b32271be71d7d4fc0bcd6cd27"
+    "manifest_hash": "sha256:e1d380c3105cd715bcd4e37c835f7cdcf6c900f7edb69e7ca9329fa101867372"
   },
   "witness": {
     "matched_expected": true,
@@ -156,9 +159,9 @@ Green-path excerpt from that same run (ids omitted; hash matches the stdout):
 }
 ```
 
-The 2026-10-06 impact table above is a different run. Its hash was `sha256:7c7d7bf38d6ffe3aeabab396a392b27bad6150fbe28765a044809e77f3cdd449`. Hashes move because KarmaSakshi `prepare` draws a nonce.
+The 2026-10-06 impact table above is an earlier local run (43 passed, hash `sha256:7c7d7bf38d6ffe3aeabab396a392b27bad6150fbe28765a044809e77f3cdd449`). Hashes move because KarmaSakshi `prepare` draws a nonce. Exit codes matched.
 
-Full notes: [docs/demo.md](docs/demo.md). Workflow that produced the linked green run: [`.github/workflows/agenttrust.yml`](.github/workflows/agenttrust.yml). That run does not upload `evidence-pack/`.
+Full notes: [docs/demo.md](docs/demo.md). Workflow: [`.github/workflows/agenttrust.yml`](.github/workflows/agenttrust.yml). Layout: [docs/adr/0004-install-and-evidence-artifact.md](docs/adr/0004-install-and-evidence-artifact.md).
 
 ## Vision
 

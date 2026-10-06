@@ -114,9 +114,9 @@ Design: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](doc
 
 **Alpha. Simulators only. Not on PyPI.** `pip install agenttrust-stack` does not work until a human publishes it. This commit does not upload.
 
-PyPI has `nishanttyagi-agenteval` **0.3.0**. Exit 3 needs `compare_runs` from git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (package 0.5.0). A direct git URL cannot be uploaded to PyPI, so the core dependency stays that URL until AgentEval 0.5.0 is published from its own repo. Then this package can depend on `nishanttyagi-agenteval>=0.5.0,<0.6`. See [docs/adr/0007-pypi.md](docs/adr/0007-pypi.md).
+The core dependency is PyPI `nishanttyagi-agenteval>=0.5.0,<0.6` ([0.5.0](https://pypi.org/project/nishanttyagi-agenteval/0.5.0/), provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`). Exit 3 calls `compare_runs` from that package. `agenttrust-stack` itself is still not published. See [docs/adr/0007-pypi.md](docs/adr/0007-pypi.md).
 
-What each install is for, once that PyPI pin exists. None of these are live index commands today.
+What each install is for after this package is published. None of these are live index commands today.
 
 | Command | Unlocks |
 |---|---|
@@ -124,7 +124,7 @@ What each install is for, once that PyPI pin exists. None of these are live inde
 | `pip install "agenttrust-stack[karmasakshi]"` | The row above, plus KarmaSakshi seal and witness on the payment and email simulators. |
 | `pip install "agenttrust-stack[dev,karmasakshi]"` | The row above, plus pytest. |
 
-There is no `[agenteval]` extra. AgentEval is a direct dependency, not an optional one, and today that dependency is the git pin.
+There is no `[agenteval]` extra. AgentEval is a direct PyPI dependency, not an optional one.
 
 Supported command now, from a clone, bash and PowerShell:
 
@@ -210,7 +210,7 @@ Shipped in this repository:
 
 Next, in order:
 
-1. Pin `nishanttyagi-agenteval` to git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`. Done. PyPI is still 0.3.0. Exit 3 calls `compare_runs` from that pin. The `agenteval compare` CLI was not invoked.
+1. Depend on PyPI `nishanttyagi-agenteval>=0.5.0,<0.6` (0.5.0, provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`). Done. Exit 3 calls `compare_runs`. The `agenteval compare` CLI was not invoked. This package is still not uploaded.
 2. Keep the local text check only when that import fails. Stderr names the fallback.
 3. `email.send` is sealed on `email.sandbox`. `data.delete` and `deploy.release` stay rule-only until upstream ships those effect types ([ADR 0006](docs/adr/0006-multi-action-seals.md)).
 4. Publish a sample evidence pack from a real GitHub Actions run of this workflow, so the README can cite a remote CI URL as well as the local 43-pass run.
@@ -224,8 +224,8 @@ Out of this product on purpose: a second approval inbox, a hosted trace platform
 - A missing CodeGovernor policy event imports as `unknown` and fails CI. It does not become an allow.
 - KarmaSakshi requires Python `>=3.10,<3.14`. On 3.14 the attach tests skip.
 - Manifest hashes are not golden constants. `prepare` draws a nonce.
-- Exit 3 calls `agenteval.core.compare.compare_runs` from git SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7` (the function `agenteval compare` uses). It is not a claim that the `agenteval compare` CLI was invoked. If that package is missing, stderr says `agenteval compare unavailable; local ground_truth check`.
-- This package is not on PyPI. PyPI AgentEval is 0.3.0. The git dependency blocks an upload until AgentEval 0.5.0 is published and this pin becomes `nishanttyagi-agenteval>=0.5.0,<0.6`.
+- Exit 3 calls `agenteval.core.compare.compare_runs` from `nishanttyagi-agenteval` 0.5.0 (provenance SHA `99fa7a5f4edafd44acb6c68d23cb871eb539b7d7`, the function `agenteval compare` uses). It is not a claim that the `agenteval compare` CLI was invoked. If that package is missing, stderr says `agenteval compare unavailable; local ground_truth check`.
+- This package is not on PyPI. AgentEval 0.5.0 is. Uploading `agenttrust-stack` still requires the human message `upload now`. No `v0.1.0` tag exists.
 - Nothing in the importer auto-approves a case.
 
 Research behind the scope: [docs/research/top20-comparison.md](docs/research/top20-comparison.md), [docs/research/gap-matrix.md](docs/research/gap-matrix.md). Status: [docs/progress.md](docs/progress.md).

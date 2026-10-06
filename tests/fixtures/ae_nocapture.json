@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "trace_id": "tr_nocapture",
+  "occurred_at": "2026-10-06T12:00:00Z",
+  "source": "mock_agent",
+  "agent_name": "refund-desk",
+  "status": "failed",
+  "content_captured": false,
+  "output": "redacted",
+  "failure_category": "tool_error"
+}

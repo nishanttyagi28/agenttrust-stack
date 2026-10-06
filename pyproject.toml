@@ -19,12 +19,9 @@ dependencies = ["pydantic>=2.0,<3"]
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
 
-[tool.setuptools]
-package-dir = { "" = "packages/evidence" }
-
 [tool.setuptools.packages.find]
-where = ["packages/evidence"]
+where = ["packages/evidence", "packages/importers"]
 include = ["agenttrust*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["packages/evidence"]
+pythonpath = ["packages/evidence", "packages/importers"]

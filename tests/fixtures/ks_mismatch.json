@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "exported_at": "2026-10-06T12:00:00Z",
+  "effect_type": "payment.transfer",
+  "adapter_id": "payment.simulator.v1",
+  "adapter_version": "1.0.0",
+  "normalized_inputs": {
+    "amount_minor": 150100,
+    "beneficiary": "Priya"
+  },
+  "expected_effect": {
+    "target_resource": "Priya",
+    "expected_after_state_digest": "digest:priya-1500"
+  },
+  "observed_outcome": {
+    "commit_success": true,
+    "matched_expected": false,
+    "detail": "amount mismatch: expected 150000 got 150100"
+  },
+  "failure_category": "attempt_diverged_from_seal",
+  "reproduction_metadata": {
+    "manifest_hash": "sha256:priya-1500",
+    "idempotency_key": "idem-priya-mismatch"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "trace_id": "tr_demo",
+  "occurred_at": "2026-10-06T12:00:00Z",
+  "source": "mock_agent",
+  "agent_name": "refund-desk",
+  "status": "failed",
+  "content_captured": true,
+  "prompt": "Refund order 4821",
+  "output": "Unable to complete refund.",
+  "failure_category": "tool_error",
+  "tool_calls": [
+    {
+      "name": "lookup_order",
+      "arguments": {"order_id": "4821"},
+      "result": "not_found",
+      "status": "failed"
+    }
+  ]
+}

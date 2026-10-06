@@ -29,8 +29,8 @@ Architecture note and ADRs written. No product code.
 | # | Gap | Status |
 |---|---|---|
 | 1 | Evidence Schema v1 | **Done** — `agenttrust.evidence`, 17 round-trip tests |
-| 2 | Importers from existing repos | [ ] |
-| 3 | Deny / witness-mismatch → candidate → human approve → YAML | [ ] |
+| 2 | Importers from existing repos | **Done** — KS fixture, CG policyEvents, AE trace |
+| 3 | Deny / witness-mismatch → candidate → human approve → YAML | **Done** — `approve_case` only; CLI exits 2 without `--approve` |
 | 4 | Consequential-action Decision records (gate) | [ ] |
 | 5 | Attach KarmaSakshi seal and witness | [ ] |
 | 6 | One local CI check (three fail reasons) | [ ] |
@@ -45,10 +45,12 @@ Architecture note and ADRs written. No product code.
 
 None. AgentEval git SHA pin deferred to first importer PR per ADR 0001.
 
-## Evidence slice
+## Importers slice
 
-**Status:** Done (2026-10-06). Orchestrator re-ran `pytest tests/evidence`: 17 passed. Allowlist: 10 paths.
+**Status:** Done (2026-10-06). Orchestrator re-ran `pytest tests/importers tests/evidence`: 30 passed.
+
+`agenttrust` is a namespace package so evidence and importers can share one import name. `CG-GATE-002` alone maps to `unknown`, not allow. Golden YAML is written only after `approve_case`.
 
 ### Next agent
 
-**Importers** — map AgentEval, KarmaSakshi, and CodeGovernor fixtures into `Chain`. Not started.
+**Gate and CI** — rule IDs in code, KarmaSakshi attach, three CI fail reasons. Not started.

@@ -1,0 +1,11 @@
+{
+  "policyEvents": [
+    {
+      "label": "coder:T1",
+      "role": "coder",
+      "tool": "shell",
+      "ruleId": "CG-GATE-002",
+      "detail": "shell call recorded"
+    }
+  ]
+}

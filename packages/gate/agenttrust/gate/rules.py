@@ -1,0 +1,17 @@
+"""Rule IDs for consequential actions. The code is the source of truth."""
+
+from __future__ import annotations
+
+AT_PAY_001 = "AT-PAY-001"
+AT_PAY_002 = "AT-PAY-002"
+AT_MAIL_001 = "AT-MAIL-001"
+AT_DEL_001 = "AT-DEL-001"
+AT_DEP_001 = "AT-DEP-001"
+
+RULE_NAMES = {
+    AT_PAY_001: "PAYMENT_AMOUNT_DIFFERS",
+    AT_PAY_002: "PAYMENT_PAYEE_NOT_ALLOWED",
+    AT_MAIL_001: "EMAIL_RECIPIENT_NOT_ALLOWED",
+    AT_DEL_001: "DELETE_TARGET_NOT_ALLOWED",
+    AT_DEP_001: "DEPLOY_TARGET_NOT_ALLOWED",
+}

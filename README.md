@@ -42,4 +42,9 @@ ADRs: [docs/adr/](docs/adr/)
 - **CodeGovernor policy events may be incomplete** — missing hook denials import as `unknown`, not allow.
 - **PromptGate and VisionEval are out of path** — not dependencies for v1.
 - **No production payment connector** in this repo.
-- **Demo metrics** (exit codes, file names, pass counts) will be recorded in a later slice after a real offline run; none are stated here.
+- **Demo metrics** from one offline run on 2026-10-06, Python 3.12, `karmasakshi-protocol` 0.2.0, `python -m pytest -q` → **43 passed**. Wrong payment ₹1501 (150100 minor units) to Priya: CI exit **1**, rule `AT-PAY-001`, no effect and no witness. Sealed ₹1500 (150000) to Priya: CI exit **0**, witness `matched_expected=True`, adapter `payment.simulator`, target `payment:beneficiary/Priya`. Replay text `settled 150100` against the human-approved golden (`ground_truth` `blocked`): CI exit **3**. Replay text that contains `blocked`: exit **0**.
+- **Manifest hashes are not stable.** KarmaSakshi `prepare` draws a nonce. That run's hash was `sha256:7c7d7bf38d6ffe3aeabab396a392b27bad6150fbe28765a044809e77f3cdd449`.
+- **CI exit 3 is local.** It checks that the golden YAML `ground_truth` appears in the replay text. `agenteval compare` was not executed. AgentEval on PyPI is still 0.3.0; the git pin of main is not a SHA yet.
+- **KarmaSakshi requires Python >=3.10,<3.14.** Gate attach tests skip when the package is missing.
+- **No auto-approve.** Pending eval cases are not golden YAML. Only `approve_case` sets `approved`.
+- **`CG-GATE-002` alone is `unknown`.** It records a shell call, including allowed ones. It is not a payment allow.

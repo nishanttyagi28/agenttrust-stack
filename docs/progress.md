@@ -55,3 +55,28 @@ None. AgentEval git SHA pin deferred to first importer PR per ADR 0001.
 
 **Status:** Done (2026-10-06). Orchestrator implemented these slices after reading `karmasakshi-protocol` 0.2.0 (adapter id `payment.simulator`). `python3.12 -m pytest -q`: 43 passed. Demo numbers are in `docs/demo.md` and the README. Local regression check is not an AgentEval CLI run.
 
+## Impact sprint
+
+**P0 product surface:** Done locally (2026-10-07). Not pushed. Human OK required before P1.
+
+README has an Alpha status line, the CI badge, and the existing green run https://github.com/nishanttyagi28/agenttrust-stack/actions/runs/37510342515 (commit `97b52f3`, tests only, no `evidence-pack/` artifact). Impact table stays on the 2026-10-06 numbers. Inline stdout and the green-chain excerpt are from one local run on 2026-10-07; hash `sha256:264730d09ab2a10978af0b9b95249efeefd3693b32271be71d7d4fc0bcd6cd27`.
+
+`pip install -e ".[dev,karmasakshi]"` was attempted on Python 3.12 and failed: `package directory 'packages\ci\agenttrust\evidence' does not exist`. The README states that failure. P1 owns the fix.
+
+### GitHub description (human sets this on the repo page)
+
+`Release gate for consequential agent actions: policy, sealed effect, witness, and an approved CI regression.`
+
+### Checklist before P1
+
+| ID | Status |
+|---|---|
+| A Install without PYTHONPATH | Open. Editable install fails as above. |
+| B Product README | Local only. Badge points at run 37510342515. No artifact link yet. |
+| C Evidence-pack artifact | Open. Cited run did not upload one. |
+| D AgentEval compare | Open. Exit 3 is still the local text check. |
+| E Email, delete, deploy seal | Open. Rule IDs exist. Only payment is sealed. |
+| F Version 0.1.0 Alpha | Open. Still `0.0.0` / Planning / Private. |
+| G ADRs 0004 and 0005, progress | Progress updated. ADRs not written. |
+| H Tests green on Actions after push | Last green run is 37510342515. This slice is not pushed. |
+

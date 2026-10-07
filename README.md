@@ -47,7 +47,7 @@ The demo runs offline against KarmaSakshi's payment and email simulators. Financ
 - An approved failure is replayed later. If the replay no longer matches the approved ground truth, the check exits 3.
 - The same is shown for an email to the wrong recipient (`AT-MAIL-001`), and for delete and deploy targets that aren't on the allowlist.
 
-The demo writes `evidence-pack/chain.json`, and `agenttrust.report` renders it as one HTML page. With a pip install, the same commands are available as `agenttrust-demo` and `agenttrust-report`.
+The demo writes `evidence-pack/chain.json`, and `agenttrust.report` turns it into one HTML page. With a pip install, the same commands are available as `agenttrust-demo` and `agenttrust-report`.
 
 ## How it works
 

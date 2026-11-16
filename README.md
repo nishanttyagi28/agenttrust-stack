@@ -104,3 +104,7 @@ CI runs the tests, the demo and the report on every push, and uploads `evidence-
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## How this was built
+
+Parts of this code were written with AI coding assistants (Cursor and Claude). I set the design and the tests the code has to pass, and agent-written commits carry a `Co-authored-by` trailer.

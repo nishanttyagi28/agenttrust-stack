@@ -60,9 +60,9 @@ flowchart LR
 
 ### `agenttrust.evidence`
 
-- **Emits:** Validated `Chain` JSON (canonical encoding per ADR 0002).
-- **Consumes:** Raw JSON for parse/validate/round-trip.
-- **Does not:** Call KarmaSakshi or AgentEval; no network.
+- **Emits:** Validated `Chain` JSON (canonical encoding per ADR 0002) and signed envelopes (`Ed25519` over that canonical JSON, ADR 0008).
+- **Consumes:** Raw JSON for parse/validate/round-trip; a public key as trust anchor for verification.
+- **Does not:** Call KarmaSakshi or AgentEval; no network. Signing does not make the witness honest — it only proves the document was not edited after signing.
 
 ### `agenttrust.importers`
 
@@ -78,9 +78,9 @@ flowchart LR
 
 ### `agenttrust.ci`
 
-- **Consumes:** One or more `Chain` files plus AgentEval baseline inputs.
+- **Consumes:** One or more `Chain` files (signed or bare) plus AgentEval baseline inputs.
 - **Emits:** Process exit code 0 (pass) or non-zero (fail) with reason codes.
-- **Does not:** Define a parallel evidence format.
+- **Does not:** Define a parallel evidence format. Does not accept a signature it cannot check against a caller-supplied trust anchor.
 
 ### `apps/demo` / `apps/report`
 
@@ -90,12 +90,13 @@ flowchart LR
 
 ---
 
-## CI fail conditions (all three)
+## CI fail conditions (all four)
 
-The `agenttrust.ci` entrypoint exits **non-zero** when **any** of these is true:
+The `agenttrust.ci` entrypoint exits **non-zero** when **any** of these is true. Integrity is evaluated first and short-circuits the rest.
 
 | # | Condition | Schema signal |
 |---|---|---|
+| 0 | **Integrity** — the document is unsigned, signed by an untrusted key, or edited after signing | No envelope, `signature.key_id` mismatch, or `InvalidSignature` over canonical JSON (ADR 0008) → exit **4** |
 | 1 | Required policy **deny or unknown** | `decision.outcome == "deny"` or `"unknown"` — **fails immediately**, whether or not an `eval_case` is present |
 | 2 | Consequential effect **lacks matching witness** | `decision.outcome == "allow"`, `effect_ref` present, and (`witness` is null OR `witness.matched_expected` is `false` or `null`) |
 | 3 | **Eval regression** | Human set `eval_case.approval.state` to `approved`, case was written into the AgentEval golden file, and a **later** `agenteval compare` still reports failure |

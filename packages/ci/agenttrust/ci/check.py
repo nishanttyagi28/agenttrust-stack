@@ -1,16 +1,72 @@
-"""One local check: policy deny, missing witness, or eval regression."""
+"""One local check: integrity, policy deny, missing witness, or eval regression."""
 
 from __future__ import annotations
 
 import json
 import sys
+from dataclasses import dataclass
 
-from agenttrust.evidence import Chain, DecisionOutcome
+from agenttrust.evidence import Chain, DecisionOutcome, verify_text
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 EXIT_OK = 0
 EXIT_POLICY = 1
 EXIT_WITNESS = 2
 EXIT_REGRESSION = 3
+EXIT_INTEGRITY = 4
+
+
+@dataclass
+class EvidenceResult:
+    """Exit code plus, when integrity failed, why."""
+
+    code: int
+    reason: str | None
+
+
+def check_evidence(
+    text: str,
+    *,
+    golden_yaml: str | None = None,
+    replay_output: str | None = None,
+    trusted_public_key: Ed25519PublicKey | None = None,
+    allow_unsigned: bool = False,
+) -> int:
+    """Verify a signed evidence document, then apply the usual checks.
+
+    Integrity comes first: a chain whose contents do not match its signature
+    says nothing about policy, witness or regression, so it exits 4 rather
+    than being partially trusted.
+    """
+    return check_evidence_result(
+        text,
+        golden_yaml=golden_yaml,
+        replay_output=replay_output,
+        trusted_public_key=trusted_public_key,
+        allow_unsigned=allow_unsigned,
+    ).code
+
+
+def check_evidence_result(
+    text: str,
+    *,
+    golden_yaml: str | None = None,
+    replay_output: str | None = None,
+    trusted_public_key: Ed25519PublicKey | None = None,
+    allow_unsigned: bool = False,
+) -> EvidenceResult:
+    """Same as :func:`check_evidence` but also returns the integrity reason."""
+    chain, integrity = verify_text(
+        text,
+        trusted_public_key=trusted_public_key,
+        allow_unsigned=allow_unsigned,
+    )
+    if chain is None or not integrity.ok:
+        return EvidenceResult(EXIT_INTEGRITY, integrity.reason)
+    return EvidenceResult(
+        check_chain(chain, golden_yaml=golden_yaml, replay_output=replay_output),
+        None,
+    )
 
 
 def check_chain(

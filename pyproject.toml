@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nishanttyagi-agenttrust"
-version = "0.1.0"
+version = "0.2.0"
 description = "Thin evidence chain across policy, sealed effect, witness, and CI regression."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,6 +17,7 @@ classifiers = [
 dependencies = [
   "pydantic>=2.0,<3",
   "nishanttyagi-agenteval>=0.5.0,<0.6",
+  "cryptography>=42,<50",
 ]
 
 [project.optional-dependencies]

@@ -143,3 +143,37 @@ Earlier `agenttrust_stack-0.1.0` artifacts passed `twine check` and were not upl
 
 **Status:** Done (2026-10-07). Added pps/ui/ (dark dashboard + server.py on 127.0.0.1:8765). Button runs a real python -m agenttrust.demo via sys.executable. Demo only — not a second control center. Not yet in a PyPI release bump.
 
+
+## Signed evidence chain (ADR 0008)
+
+**Status:** Done (2026-11-19). Version 0.2.0.
+
+0.1.0 read the amount, the payee and the manifest hash out of the same file it
+was judging, so editing them still exited 0. A single forged pack could claim
+₹9,999.99 to any beneficiary and pass CI.
+
+- `agenttrust.evidence.signing` signs the canonical JSON of the chain with
+  Ed25519 and returns `{"chain": ..., "signature": {"alg", "key_id", "sig"}}`.
+- `verify_document()` re-parses and re-canonicalizes, so file formatting is free
+  and value edits are not. It refuses to verify without a caller-supplied trust
+  anchor, because a key shipped inside the document proves only self-consistency.
+- `check_evidence()` verifies first, then delegates to the unchanged
+  `check_chain()`. Integrity is exit **4** and outranks 1–3.
+- `cryptography>=42,<50` moved from the `karmasakshi` extra to `dependencies`.
+- The demo writes `evidence-pack/chain.signed.json` next to the bare ADR 0004
+  `chain.json`, and prints the forgery table on every run.
+
+Before and after, on the same five edits:
+
+| Mutation | 0.1.0 | 0.2.0 |
+|---|---|---|
+| `event.payload.amount_minor` → `999999` | 0 | **4** |
+| `effect_ref.target_resource` → another payee | 0 | **4** |
+| `effect_ref.manifest_hash` → `sha256:000…` | 0 | **4** |
+| `witness.detail` → rewritten | 0 | **4** |
+| `witness.matched_expected` → `false` | 2 | **4** |
+
+`python3.12 -m pytest -q` → **70 passed** (was 48). The 22 new tests are in
+`tests/evidence/test_signing.py`. CI now runs
+`python -m agenttrust.ci evidence-pack/chain.signed.json --demo-key`, so a
+tampered pack fails the build.

@@ -21,9 +21,13 @@ jobs:
         run: python -m agenttrust.demo
       - name: Report
         run: python -m agenttrust.report evidence-pack/chain.json evidence-pack/report.html
+      - name: Verify the signed pack
+        # Integrity is exit 4, so a tampered or unsigned pack fails the build.
+        run: python -m agenttrust.ci evidence-pack/chain.signed.json --demo-key
       - name: Require evidence pack
         run: |
           test -s evidence-pack/chain.json
+          test -s evidence-pack/chain.signed.json
           test -s evidence-pack/report.html
       - name: Upload evidence pack
         uses: actions/upload-artifact@v4

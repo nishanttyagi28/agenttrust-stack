@@ -132,4 +132,23 @@ MIT. See [LICENSE](LICENSE).
 
 ## How this was built
 
-Parts of this code were written with AI coding assistants (Cursor and Claude). I set the design and the tests the code has to pass, and agent-written commits carry a `Co-authored-by` trailer.
+Parts of this code were written with AI coding assistants (Cursor and Claude). I
+set the design and the tests the code has to pass, and agent-written commits
+carry a `Co-authored-by` trailer.
+
+Stating that is the easy half. The part that matters is what the agents were
+**not** allowed to do:
+
+- Each agent has a write lane. `tools/check_allowlist.py` maps a role to the only
+  paths it may touch, and `.githooks/pre-commit` rejects a staged diff that fits
+  no single lane. Enable it with `python scripts/install_hooks.py`.
+- A diff spanning lanes is an orchestrator change. A human can make it, but only
+  by saying so: `AGENTTRUST_SCOPE_OVERRIDE=1`, which prints an override line.
+  Silent widening is the failure mode being prevented.
+- Decisions in `docs/adr/` are not the agents' to reopen. `AGENTS.md` says so.
+- `POSTMORTEMS/` records what broke anyway, including
+  [0001](POSTMORTEMS/0001-unsigned-evidence-chain.md), where 0.1.0 claimed
+  tamper evidence it did not have for 44 days and no test could tell.
+
+Full mechanism, including what it does **not** cover: [GOVERNANCE.md](GOVERNANCE.md).
+ADR: [0009](docs/adr/0009-agent-lane-governance.md).

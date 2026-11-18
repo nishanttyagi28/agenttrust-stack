@@ -87,22 +87,47 @@ AGENTS: dict[str, tuple[str, ...]] = {
         "README.md",
         "docs/progress.md",
     ),
+    "governance": (
+        "GOVERNANCE.md",
+        "AGENTS.md",
+        "POSTMORTEMS/**",
+        ".githooks/**",
+        "tools/check_allowlist.py",
+        "scripts/install_hooks.py",
+        "docs/adr/0009-agent-lane-governance.md",
+        "README.md",
+        "docs/progress.md",
+        "tests/governance/**",
+    ),
 }
 
 
-def changed_files() -> list[str]:
-    result = subprocess.run(
-        ["git", "status", "--porcelain", "-u"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+# Sprint roles (p0..p4) are time-boxed slices, not actors. They intentionally
+# span packages, so they are excluded from --any-lane matching; otherwise a
+# single sprint role would cover every lane and the guard would always pass.
+NON_ACTOR_ROLES = frozenset({"p0", "p1", "p2", "p3", "p4"})
+
+ACTOR_ROLES = tuple(name for name in AGENTS if name not in NON_ACTOR_ROLES)
+
+
+def changed_files(staged: bool = False, against: str | None = None) -> list[str]:
+    """Paths to check: the working tree by default, or a specific diff."""
+    if staged:
+        cmd = ["git", "diff", "--cached", "--name-only", "-z"]
+    elif against is not None:
+        cmd = ["git", "diff", "--name-only", "-z", f"{against}...HEAD"]
+    else:
+        cmd = ["git", "status", "--porcelain", "-u", "-z"]
+    result = subprocess.run(cmd, check=True, capture_output=True)
+    raw = result.stdout.decode("utf-8", "replace")
+    entries = [part for part in raw.split("\0") if part]
     files: list[str] = []
-    for line in result.stdout.splitlines():
-        path = line[3:].strip()
-        if " -> " in path:
-            path = path.split(" -> ", 1)[1]
-        path = path.strip('"').replace("\\", "/")
+    for entry in entries:
+        if cmd[1] == "status":
+            entry = entry[3:]
+        if " -> " in entry:
+            entry = entry.split(" -> ", 1)[1]
+        path = entry.strip().strip('"').replace("\\", "/")
         if path:
             files.append(path)
     return files
@@ -120,21 +145,70 @@ def allowed(path: str, patterns: tuple[str, ...]) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--agent", required=True, choices=sorted(AGENTS))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--agent", choices=sorted(AGENTS), default=None)
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="check staged changes (used by the pre-commit hook)",
+    )
+    parser.add_argument(
+        "--against",
+        default=None,
+        metavar="REF",
+        help="check the diff against REF instead of the working tree",
+    )
+    parser.add_argument(
+        "--any-lane",
+        action="store_true",
+        help="pass if any single role covers the whole diff (still rejects a diff that spans lanes)",
+    )
     args = parser.parse_args()
-    patterns = AGENTS[args.agent]
+    if args.agent is None and not args.any_lane:
+        parser.error("pass --agent <role> or --any-lane")
     root = Path.cwd()
     if not (root / ".git").exists():
         print("not a git checkout", file=sys.stderr)
         return 2
-    bad = [path for path in changed_files() if not allowed(path, patterns)]
+
+    files = changed_files(staged=args.staged, against=args.against)
+    if not files:
+        print("allowlist ok: no changed paths")
+        return 0
+
+    if args.any_lane:
+        fits = [name for name in ACTOR_ROLES if all(allowed(f, AGENTS[name]) for f in files)]
+        if fits:
+            print(f"allowlist ok: diff fits role(s) {', '.join(sorted(fits))} ({len(files)} paths)")
+            return 0
+        orphans = [
+            f for f in files if not any(allowed(f, AGENTS[name]) for name in ACTOR_ROLES)
+        ]
+        if orphans:
+            print("allowlist reject: paths outside every actor role", file=sys.stderr)
+        else:
+            print(
+                "allowlist reject: the diff spans actor lanes, so no single agent "
+                "owns it -> an orchestrator change needs a human",
+                file=sys.stderr,
+            )
+        for path in files:
+            owners = [n for n in ACTOR_ROLES if allowed(path, AGENTS[n])]
+            sprint = [n for n in NON_ACTOR_ROLES if allowed(path, AGENTS[n])]
+            tag = ", ".join(sorted(owners)) or "unowned"
+            if sprint:
+                tag += f" (sprint: {', '.join(sorted(sprint))})"
+            print(f"  {path}  [{tag}]", file=sys.stderr)
+        return 1
+
+    patterns = AGENTS[args.agent]
+    bad = [path for path in files if not allowed(path, patterns)]
     if bad:
         print(f"allowlist reject for {args.agent}:")
         for path in bad:
             print(f"  {path}")
         return 1
-    print(f"allowlist ok for {args.agent} ({len(changed_files())} paths)")
+    print(f"allowlist ok for {args.agent} ({len(files)} paths)")
     return 0
 
 

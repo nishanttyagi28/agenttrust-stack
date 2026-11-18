@@ -177,3 +177,26 @@ Before and after, on the same five edits:
 `tests/evidence/test_signing.py`. CI now runs
 `python -m agenttrust.ci evidence-pack/chain.signed.json --demo-key`, so a
 tampered pack fails the build.
+
+## Governance made visible and enforced (ADR 0009)
+
+**Status:** Done (2026-11-19). No version bump.
+
+`tools/check_allowlist.py` already defined a write lane per agent, but nothing
+ever ran it. A rule nothing executes is documentation, not a control.
+
+- `.githooks/pre-commit` runs `tools/check_allowlist.py --staged --any-lane` on
+  every commit. A staged diff that fits no single actor lane is rejected before
+  the commit exists.
+- `scripts/install_hooks.py` sets `core.hooksPath` per clone. Nothing global.
+- Sprint roles `p0`–`p4` are excluded from lane matching. They span packages by
+  design, so treating them as actors would make the guard always pass.
+- `AGENTTRUST_SCOPE_OVERRIDE=1` skips the check and prints an override line. The
+  machine cannot widen its own permissions; a human can, visibly.
+- `GOVERNANCE.md` is the reader-facing mechanism, including a "what this does
+  not do" section: lanes constrain paths, not quality.
+- `tests/governance/test_allowlist.py` (6 tests) asserts the invariant that no
+  actor owns both the evidence schema and the CI check.
+- `POSTMORTEMS/0001` records the 0.1.0 evidence-chain hole, 44 days undetected.
+
+`python3.12 -m pytest -q` → **76 passed** (70 + 6 governance).

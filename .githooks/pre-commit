@@ -1,0 +1,39 @@
+#!/bin/sh
+# Pre-commit scope guard.
+#
+# A staged diff must fit inside one agent's lane (tools/check_allowlist.py).
+# A diff that spans lanes is an orchestrator change and needs a human to say
+# so out loud. There is no silent bypass: the override prints a line.
+#
+# Enable:  python scripts/install_hooks.py
+# Disable: git config --unset core.hooksPath
+
+set -e
+
+if [ "${AGENTTRUST_SCOPE_OVERRIDE:-0}" = "1" ]; then
+    echo "scope guard: OVERRIDDEN by human (AGENTTRUST_SCOPE_OVERRIDE=1)" >&2
+    echo "scope guard: this commit spans agent lanes and is a human decision" >&2
+    exit 0
+fi
+
+PY=""
+for candidate in python3 python py; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+        PY="$candidate"
+        break
+    fi
+done
+
+if [ -z "$PY" ]; then
+    echo "scope guard: no python on PATH; refusing to commit unchecked" >&2
+    echo "scope guard: install python, or set AGENTTRUST_SCOPE_OVERRIDE=1" >&2
+    exit 1
+fi
+
+if ! "$PY" tools/check_allowlist.py --staged --any-lane; then
+    echo "" >&2
+    echo "scope guard: blocked. This diff does not fit one agent's write allowlist." >&2
+    echo "  Split it, or override as a human:" >&2
+    echo "    AGENTTRUST_SCOPE_OVERRIDE=1 git commit ..." >&2
+    exit 1
+fi

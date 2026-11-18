@@ -1,4 +1,4 @@
-"""Evidence Schema v1 models and codec."""
+"""Evidence Schema v1 models, codec, and signing."""
 
 from agenttrust.evidence.codec import canonical_json, json_schema, parse_chain
 from agenttrust.evidence.models import (
@@ -14,8 +14,26 @@ from agenttrust.evidence.models import (
     Event,
     Witness,
 )
+from agenttrust.evidence.signing import (
+    ALG,
+    IntegrityError,
+    VerifyResult,
+    demo_private_key,
+    demo_public_key,
+    demo_public_key_pem,
+    is_envelope,
+    key_id,
+    load_public_key_pem,
+    public_key_pem,
+    sign_chain,
+    sign_chain_text,
+    signing_payload,
+    verify_document,
+    verify_text,
+)
 
 __all__ = [
+    "ALG",
     "Approval",
     "ApprovalState",
     "Chain",
@@ -25,9 +43,23 @@ __all__ = [
     "EffectType",
     "EvalCase",
     "Event",
+    "IntegrityError",
     "RULE_ID_RE",
+    "VerifyResult",
     "Witness",
     "canonical_json",
+    "demo_private_key",
+    "demo_public_key",
+    "demo_public_key_pem",
+    "is_envelope",
     "json_schema",
+    "key_id",
+    "load_public_key_pem",
     "parse_chain",
+    "public_key_pem",
+    "sign_chain",
+    "sign_chain_text",
+    "signing_payload",
+    "verify_document",
+    "verify_text",
 ]

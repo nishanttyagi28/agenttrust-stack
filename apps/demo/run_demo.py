@@ -2,10 +2,19 @@
 
 from __future__ import annotations
 
+import copy
+import json
 from pathlib import Path
 
-from agenttrust.ci import check_chain
-from agenttrust.evidence import EffectType, canonical_json
+from agenttrust.ci import EXIT_INTEGRITY, EXIT_OK, check_chain
+from agenttrust.evidence import (
+    EffectType,
+    canonical_json,
+    demo_private_key,
+    demo_public_key,
+    sign_chain,
+    verify_document,
+)
 from agenttrust.gate import Intent, attach_email, attach_payment, chain_for_decision
 from agenttrust.importers import approve_case, export_golden_yaml
 
@@ -17,6 +26,32 @@ DELETE = Intent(EffectType.data_delete, "table:refunds")
 DELETE_WRONG = Intent(EffectType.data_delete, "table:users")
 DEPLOY = Intent(EffectType.deploy_release, "prod")
 DEPLOY_WRONG = Intent(EffectType.deploy_release, "staging")
+
+# Each entry edits one field of a signed envelope without re-signing it.
+FORGERIES: tuple[tuple[str, str, object], ...] = (
+    ("amount", "chain.event.payload.amount_minor", 999_999),
+    ("manifest_hash", "chain.effect_ref.manifest_hash", "sha256:" + "0" * 64),
+    ("witness", "chain.witness.matched_expected", False),
+    ("decision", "chain.decision.outcome", "deny"),
+)
+
+
+def _exit_for(result: object) -> int:
+    return EXIT_OK if getattr(result, "ok", False) else EXIT_INTEGRITY
+
+
+def _forge(
+    envelope: dict[str, object], dotted: str, value: object
+) -> int:
+    """Edit a signed envelope, then ask the verifier whether it still holds."""
+    forged = copy.deepcopy(envelope)
+    cursor: dict[str, object] = forged
+    keys = dotted.split(".")
+    for key in keys[:-1]:
+        cursor = cursor[key]  # type: ignore[assignment]
+    cursor[keys[-1]] = value
+    _, result = verify_document(forged, trusted_public_key=demo_public_key())
+    return _exit_for(result)
 
 
 def run_story() -> dict[str, str | int | bool]:
@@ -38,7 +73,16 @@ def run_story() -> dict[str, str | int | bool]:
     mail_right = attach_email(MAIL, MAIL, chain_id="demo-mail-right")
     delete_wrong = chain_for_decision(DELETE, DELETE_WRONG, chain_id="demo-delete")
     deploy_wrong = chain_for_decision(DEPLOY, DEPLOY_WRONG, chain_id="demo-deploy")
+
+    envelope = sign_chain(right, demo_private_key())
+    _, signed = verify_document(envelope, trusted_public_key=demo_public_key())
+    _, unsigned = verify_document(envelope["chain"], trusted_public_key=demo_public_key())
+    forgeries = {name: _forge(envelope, path, value) for name, path, value in FORGERIES}
     return {
+        "signed_exit": _exit_for(signed),
+        "unsigned_exit": _exit_for(unsigned),
+        "forgery_exits": forgeries,
+        "signed_envelope": envelope,
         "red_exit": red,
         "green_exit": green,
         "regression_exit": regression,
@@ -76,6 +120,11 @@ def write_green_chain(story: dict[str, str | int | bool], directory: Path) -> Pa
     if not text.endswith("\n"):
         text += "\n"
     target.write_text(text, encoding="utf-8")
+    signed = directory / "chain.signed.json"
+    signed.write_text(
+        json.dumps(story["signed_envelope"], sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     return target
 
 
@@ -103,6 +152,12 @@ def main() -> int:
     print(f"deploy_red_exit={story['deploy_red_exit']}")
     print(f"deploy_rule_id={story['deploy_rule_id']}")
     print(f"deploy_seal={story['deploy_seal']}")
+    print(f"signed_exit={story['signed_exit']}")
+    print(f"unsigned_exit={story['unsigned_exit']}")
+    forgeries = story["forgery_exits"]
+    assert isinstance(forgeries, dict)
+    for name, code in forgeries.items():
+        print(f"forged_{name}_exit={code}")
     ok = (
         story["red_exit"] == 1
         and story["green_exit"] == 0
@@ -110,6 +165,9 @@ def main() -> int:
         and story["email_green_exit"] == 0
         and story["delete_red_exit"] == 1
         and story["deploy_red_exit"] == 1
+        and story["signed_exit"] == EXIT_OK
+        and story["unsigned_exit"] == EXIT_INTEGRITY
+        and all(code == EXIT_INTEGRITY for code in forgeries.values())
     )
     return 0 if ok else 1
 
